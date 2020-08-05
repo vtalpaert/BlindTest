@@ -64,13 +64,13 @@ class RGLed { // only two colors RGB led
       setColor(0, 0);
     };
     void red() {
-      setColor(255, 1);
+      setColor(255, 20);
     };
     void green() {
-      setColor(1, 255);
+      setColor(20, 255);
     };
     void yellow() {
-      setColor(255, 100);
+      setColor(255, 255);
     };
 };
 
@@ -133,24 +133,87 @@ class PullUpAnalogButton {
 };
 
 
+// Astronomia - Arduino version by Marko Creations
+int astronomia[] = {
+  NOTE_AS4, NOTE_AS4, NOTE_AS4, NOTE_AS4,
+  NOTE_AS4, NOTE_AS4, NOTE_AS4, NOTE_AS4,
+  NOTE_AS4, NOTE_AS4, NOTE_AS4, NOTE_AS4,
+  NOTE_AS4, NOTE_AS4, NOTE_AS4, NOTE_AS4,
+  NOTE_AS4, NOTE_AS4, NOTE_AS4, NOTE_AS4,
+  NOTE_D5, NOTE_D5, NOTE_D5, NOTE_D5,
+  NOTE_C5, NOTE_C5, NOTE_C5, NOTE_C5,
+  NOTE_F5, NOTE_F5, NOTE_F5, NOTE_F5,
+  NOTE_G5, NOTE_G5, NOTE_G5, NOTE_G5,
+  NOTE_G5, NOTE_G5, NOTE_G5, NOTE_G5,
+  NOTE_G5, NOTE_G5, NOTE_G5, NOTE_G5,
+  NOTE_C5, NOTE_AS4, NOTE_A4, NOTE_F4,
+  NOTE_G4, 0, NOTE_G4, NOTE_D5,
+  NOTE_C5, 0, NOTE_AS4, 0,
+  NOTE_A4, 0, NOTE_A4, NOTE_A4,
+  NOTE_C5, 0, NOTE_AS4, NOTE_A4,
+  NOTE_G4,0, NOTE_G4, NOTE_AS5,
+  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
+  NOTE_G4,0, NOTE_G4, NOTE_AS5,
+  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
+  NOTE_G4, 0, NOTE_G4, NOTE_D5,
+  NOTE_C5, 0, NOTE_AS4, 0,
+  NOTE_A4, 0, NOTE_A4, NOTE_A4,
+  NOTE_C5, 0, NOTE_AS4, NOTE_A4,
+  NOTE_G4,0, NOTE_G4, NOTE_AS5,
+  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5,
+  NOTE_G4,0, NOTE_G4, NOTE_AS5,
+  NOTE_A5, NOTE_AS5, NOTE_A5, NOTE_AS5
+};
+int astronomiaDurations[] = {
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+  4,4,4,4,
+};
+int astronomiaLength = 112;
+
 // Victory melody
 int melody1[] = {
-  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
+  NOTE_C4, NOTE_G4, NOTE_C4, NOTE_G4
 };
 // note durations: 4 = quarter note, 8 = eighth note, etc.:
 int noteDurations1[] = {
-  4, 8, 8, 4, 4, 4, 4, 4
+  6, 4, 6, 2
 };
-int melodyLength1 = 8;
+int melodyLength1 = 4;
 
 // Failure melody
 int melody2[] = {
-  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
+  NOTE_C2, NOTE_B1, NOTE_AS1
 };
 int noteDurations2[] = {
-  4, 8, 8, 4, 4, 4, 4, 4
+  4, 4, 2
 };
-int melodyLength2 = 8;
+int melodyLength2 = 3;
 
 class MelodyPlayer {
   private:
@@ -232,7 +295,7 @@ class BlindTest {
       player2.begin(12);
       relay.begin(13);
       sevenSeg1.begin(A0, A1, A2, A3);
-      sevenSeg2.begin(A4, A5, 7, 8);
+      sevenSeg2.begin(7, 8, A4, A5);
       // jack on 17
     };
     void pauseMusic() {
@@ -256,6 +319,7 @@ class BlindTest {
     void start() {
       displayScores();
       playMusic();
+      state = 0;
     };
     void testMelody() {
       pauseMusic();
@@ -268,8 +332,8 @@ class BlindTest {
       long ts = millis();
       switch (state) {
         case 0: // wait for player to press or GM to press NEXT or NO
-          led1.pulseColor(255, 1, ts, pulseFrequency);
-          led2.pulseColor(255, 1, ts, pulseFrequency);
+          led1.pulseColor(255, 30, ts, pulseFrequency);
+          led2.pulseColor(240, 30, ts, pulseFrequency);
           if (isPaused and buttonYes.isPressed()) { // only reads button if isPaused necessary
             playMusic();
           }
@@ -283,7 +347,7 @@ class BlindTest {
         case 1: // side 1 has the hand
           pauseMusic();
           led2.off();
-          led1.pulseColor(255, 100, ts, pulseFrequency); // yellow pulse, but could be yellow full
+          led1.pulseColor(240, 150, ts, pulseFrequency); // yellow pulse, but could be yellow full
           if (buttonYes.isPressed()) {
             led1.green();
             player1.playMelody1(); // will delay execution
@@ -317,7 +381,7 @@ class BlindTest {
         case 2: // side 2 has the hand
           pauseMusic();
           led1.off();
-          led2.pulseColor(255, 100, ts, pulseFrequency); // yellow pulse, but could be yellow full
+          led2.pulseColor(240, 255, ts, pulseFrequency); // yellow pulse, but could be yellow full
           if (buttonYes.isPressed()) {
             led2.green();
             player2.playMelody1(); // will delay execution
@@ -359,12 +423,13 @@ void setup() {
   blindTest.begin();
   blindTest.start();
   //blindTest.testMelody();
+  Serial.begin(9600); // do not use serial while power through VIN
 }
 
 void loop() {
-  delay(5000);
-  blindTest.pauseMusic();
-  delay(5000);
-  blindTest.playMusic();
-  //blindTest.run();  
+  Serial.print("Button Yes analog value: ");
+  Serial.println(blindTest.buttonYes.read());
+  Serial.print("State: ");
+  Serial.println(state);
+  blindTest.run();
 }
